@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,6 +36,14 @@ namespace ApiFun
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                app.UseWebpackDevMiddleware(
+                    new WebpackDevMiddlewareOptions
+                    {
+                        HotModuleReplacement = true,
+                        ConfigFile = Path.Combine(env.ContentRootPath, @"vueclient\build\webpack.base.conf.js"),
+                        ProjectPath = Path.Combine(env.ContentRootPath, "vueclient"),
+                    });
             }
             else
             {
@@ -41,6 +51,7 @@ namespace ApiFun
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
